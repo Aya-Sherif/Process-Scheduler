@@ -14,6 +14,14 @@ bool FCFS::IsIDeal()
 		return true;
 	}
 }
+ Process* FCFS::ReturnProces()
+{
+	  StealProcess = FCFSProcesses.Front();
+	 FCFSProcesses.DeleteFirst();
+	 SetTotalBusyTime(-StealProcess->GetCPUTime());
+	 return StealProcess;
+
+}
 void FCFS::SetTotalTurnaroundTime(int t)
 {
 	TotalTAT = TotalTAT + t;
@@ -37,7 +45,7 @@ void FCFS::Add_process(Process* p)
 }
 void FCFS::delete_process(Process* p)
 {
-	FCFSProcesses.DeleteLast();
+	FCFSProcesses.DeleteFirst();
 }
 
 void FCFS::SetTotalBusyTime(int c)
@@ -51,6 +59,14 @@ void FCFS::SetRunProces()
 		RunProcess = FCFSProcesses.Front();
 		RunProcess->SetProcessState(2);
 		FCFSProcesses.DeleteFirst();
+		//check if it will be migrated 
+		int waiting = scheduler->GetCurrentTimeStep() - RunProcess->GetArrivalTime() - RunProcess->GetCurrentCT();
+		if (waiting>scheduler->GetMaxW())
+		{
+			scheduler->ProcessMigration(2, RunProcess);
+
+			SetRunProces();
+		}
 	}
 }
 
@@ -134,3 +150,5 @@ void FCFS::ProcessorAlgo()
 
 
 }
+
+

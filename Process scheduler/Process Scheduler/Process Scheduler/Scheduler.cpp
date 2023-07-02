@@ -216,8 +216,109 @@ void  Scheduler::FromBLKToReady()
 void  Scheduler::FromRunToTerm(Process* processes)
 {
 	TRM_List.push(processes);
+	processes->SetTerminationTime(TimeStep);
+	processes->SetTurnaroundDuration();
+	processes->SetWaitingTime();
 	processes->SetProcessState(4);
 
+
+}
+/// <summary>
+/// With a work-stealing approach, the shortest ready queue in the system looks at the longest 
+//ready queue to see how full it is.If the longest queue is(notably) more full, the shortest one
+//will ‘steal” one or more process from it to help balance load
+/// </summary>
+
+void Scheduler::WorkStealing()
+{
+	int SQF = -1;  //longest queue finish time
+	int LQF = -1; //shortest queue finish time
+	int ShortestNode = 0;
+	int longestNode = 0;
+	//To find the shortest and longest queue
+	for (int i = 1; i < (NumFCFS + NumRR + NumSJF + 1); i++)
+	{
+		int expectedFinishTime = ProcessorsList.Data_found(i)->GetTotalBusyTime() + TimeStep;
+		if (SQF > expectedFinishTime)
+		{
+			SQF = expectedFinishTime;
+			ShortestNode = i;
+		}
+		if (LQF < expectedFinishTime)
+		{
+			LQF = expectedFinishTime;
+			longestNode = i;
+		}
+	}
+	StealLimit = ((LQF - SQF) / LQF) * 100;
+	while (StealLimit > 40)
+	{
+		ProcessorsList.Data_found(ShortestNode)->Add_process(ProcessorsList.Data_found(longestNode)->ReturnProces());
+
+		// Update the finish times and StealLimit
+
+		LQF = ProcessorsList.Data_found(longestNode)->GetTotalBusyTime() + TimeStep;
+		SQF = ProcessorsList.Data_found(ShortestNode)->GetTotalBusyTime() + TimeStep;
+		StealLimit = ((LQF - SQF) / LQF) * 100;
+
+	}
+
+	// Reset variables
+	SQF = -1;
+	LQF = -1;
+	ShortestNode = 0;
+	longestNode = 0;
+}
+int Scheduler::GetRTF()const
+{
+	return RTF;
+}int Scheduler::GetMaxW()const
+{
+	return MAxW;
+}int Scheduler::GetRTF()const
+{
+	return TimeStep;
+}
+//The num will be used to check if the process will be migrate from RR or FCFS if num=1 it will be RR and if 2 it will be FCFS
+void Scheduler::ProcessMigration(int num, Process* MigratedProcess)
+{
+	int ShortestNode = 0;
+	int ShortesRT = -1;
+	if (num == 1)
+	{
+		for (int i = (NumFCFS); i < (NumSJF + NumFCFS); i++)
+		{
+			if (ShortesRT > ProcessorsList.Data_found(i)->GetTotalBusyTime())
+			{
+				ShortestNode = i;
+				ShortesRT = ProcessorsList.Data_found(i)->GetTotalBusyTime();
+			}
+		}
+		ProcessorsList.Data_found(ShortestNode)->Add_process(MigratedProcess);
+
+		//reset values
+		ShortestNode = 0;
+			ShortesRT = -1;
+
+
+	}
+
+	else if (num == 2)
+	{
+		for (int i = (NumSJF + NumFCFS); i < (NumSJF + NumFCFS + NumRR); i++)
+		{
+			ShortestNode = i;
+			ShortesRT = ProcessorsList.Data_found(i)->GetTotalBusyTime();
+		}
+		ProcessorsList.Data_found(ShortestNode)->Add_process(MigratedProcess);
+		//reset values
+		ShortestNode = 0;
+		ShortesRT = -1;
+	}
+	else
+	{
+		return;
+	}
 }
 
 
@@ -230,6 +331,10 @@ void Scheduler::simulation()
 
 	}
 	FromBLKToReady();
+	if (!(TimeStep % STL))
+	{
+		WorkStealing();
+	}
 	TimeStep++;
 }
 

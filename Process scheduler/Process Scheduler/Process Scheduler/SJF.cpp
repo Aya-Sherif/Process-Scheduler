@@ -18,6 +18,13 @@ bool SJF::IsIDeal()
 		return true;
 	}
 }
+Process* SJF::ReturnProces()
+{
+	StealProcess = SJFProcessoes.top();
+	SJFProcessoes.pop();
+	SetTotalBusyTime(-StealProcess->GetCPUTime());
+	return StealProcess;
+}
 void SJF::SetTotalTurnaroundTime(int t)
 {
 	TotalTAT = TotalTAT + t;

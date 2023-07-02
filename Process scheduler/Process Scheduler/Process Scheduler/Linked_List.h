@@ -350,7 +350,7 @@ public:
 				return curr->getItem();
 			}
 			curr = curr->getNext();
-		}
+		} 
 		throw out_of_range("Node number out of range");
 	}
 	template <typename T>

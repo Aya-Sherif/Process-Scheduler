@@ -16,6 +16,14 @@ bool RR::IsIDeal()
 		return true;
 	}
 }
+Process* RR::ReturnProces()
+{
+	StealProcess = RRProcesses.front();
+	RRProcesses.pop();
+	SetTotalBusyTime(-StealProcess->GetCPUTime());
+	return StealProcess;
+
+}
 void RR::SetTotalTurnaroundTime(int t)
 {
 	TotalTAT = TotalTAT + t;
@@ -56,6 +64,12 @@ void RR::SetRunProces()
 		RunProcess = RRProcesses.front();
 		RunProcess->SetProcessState(2);
 		RRProcesses.pop();
+		int RemainigTime = RunProcess->GetCPUTime() - RunProcess->GetCurrentCT();
+		if (RemainigTime<scheduler->GetRTF())
+		{
+			scheduler->ProcessMigration(1, RunProcess);
+			SetRunProces();
+		}
 	}
 }
 

@@ -15,6 +15,7 @@ class Scheduler
 	int TimeSlice;
 	IO io ;
 	int BLKSteps = 0;
+	int StealLimit = 0;
 	Scheduler* S;
 	LinkedList<Processor * > ProcessorsList;
 	queue<Process*> BLK_List;
@@ -36,7 +37,13 @@ public:
 	bool CheckIORequests(Process*);
 	void FromBLKToReady();
 	void FromRunToTerm(Process*);
+	void WorkStealing();
 	void simulation();
+	int GetRTF()const;
+	int GetMaxW()const;
+	int GetCurrentTimeStep()const;
+	
+	void ProcessMigration(int,Process* );
 };
 
 

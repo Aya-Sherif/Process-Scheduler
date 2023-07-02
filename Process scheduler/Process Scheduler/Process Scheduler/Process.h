@@ -39,7 +39,7 @@ public:
     //The total time a process spends in the system from its arrival to its termination ----> Turnaround Duration=Termination Time -Arrival Time
     void SetTurnaroundDuration();
     //The total time a process spends in the system not bing executed by the CPU  ----> wating time = turnaround duration - CPU 
-    void SetWsitingTime();
+    void SetWaitingTime();
     //This function to change between states{    NEW, RDY, RUN, BLK, TRM, ORPH  } 
     void SetProcessState(int );
     //The Process Time executed 

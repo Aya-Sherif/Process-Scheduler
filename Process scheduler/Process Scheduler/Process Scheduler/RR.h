@@ -1,10 +1,13 @@
 #pragma once
 #include "Processor.h"
 #include "Scheduler.h"
+
 class RR :public Processor
 {
 	queue <Process*> RRProcesses;
 	Process* RunProcess=nullptr;
+		Process* StealProcess = nullptr;
+
 	int TimeSlice;
 	int TotalTAT = 0;
 	int TotalIdealTime = 0;
@@ -12,10 +15,12 @@ class RR :public Processor
 	int totalBusyTime = 0;
 	int ProcessorUtilization = 0;
 	int countTime = 0;
+
 public:
 	RR(int T,Scheduler*);
 	virtual bool IsIDeal();
 	virtual void ProcessorAlgo();
+	virtual Process* ReturnProces();
 
 
 	///___setters___///

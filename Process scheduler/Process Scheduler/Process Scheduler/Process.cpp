@@ -24,7 +24,7 @@ void Process::SetTurnaroundDuration()
 {
 	TurnarroudDuration = TerminationTime - ArrivalTime;
 }
-void Process::SetWsitingTime()
+void Process::SetWaitingTime()
 {
 	WatingTime = TurnarroudDuration - CPUTIME;
 }

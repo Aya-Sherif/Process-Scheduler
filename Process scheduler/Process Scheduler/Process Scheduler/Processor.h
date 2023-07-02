@@ -29,12 +29,14 @@ public:
 	virtual void SetTotalProcessorIDLETime() = 0;     
 	virtual void SetProcessorLoad() = 0;               //Processor Load=Total processor Busy Time ÷ processor turnround
 	virtual void SetProcessorUtilization() = 0;        //Processor Utilization=Total processor Busy Time ÷ processor turnround
-	virtual void Add_process(Process* p) = 0;	      
-	virtual void delete_process(Process* p) = 0;
 	///___getters___///
 	virtual int GetTotalTurnaroundTime()  = 0;
 	virtual Process* GetRunProcess() = 0;
 	virtual int GetTotalBusyTime() = 0;
+		
+	///__functions__///
 
-
+	virtual void Add_process(Process* p) = 0;	      
+	virtual void delete_process(Process* p) = 0;
+	virtual Process* ReturnProces() = 0;
 };

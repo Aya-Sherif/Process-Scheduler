@@ -9,6 +9,7 @@ class FCFS :public Processor
 	
 	LinkedList<Process*> FCFSProcesses;
 	Process* RunProcess=nullptr;
+	Process* StealProcess = nullptr;
 	int TotalTAT = 0;
 	int TotalIdealTime = 0;
 	int ProcessorLoad = 0;
@@ -18,6 +19,11 @@ public:
 	FCFS(Scheduler*);
 	virtual bool IsIDeal() ;
 	virtual void ProcessorAlgo() ;
+	virtual Process* ReturnProces();
+
+
+
+	///___seeters___///
 	virtual void SetTotalTurnaroundTime(int) ;
 	virtual void SetTotalProcessorIDLETime() ;
 	virtual void SetProcessorLoad() ;
@@ -27,13 +33,16 @@ public:
 	virtual void SetTotalBusyTime(int c);
 	virtual void SetRunProces() ;
 
-
 	///___getters___///
 
 
 	virtual int GetTotalTurnaroundTime()  ;				
 	virtual Process* GetRunProcess();
 	virtual int GetTotalBusyTime();
+
+
+
+
 };
 
 #endif
